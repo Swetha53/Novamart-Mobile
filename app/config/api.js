@@ -21,6 +21,7 @@ const CART_URL =
   Platform.OS == "ios"
     ? "http://localhost:8092/api/cart"
     : "http://10.0.2.2:8092/api/cart";
+const REALITY_URL = "http://127.0.0.1:8000/reality";
 
 const checkLoginCredentials = async (email, password) => {
   try {
@@ -127,6 +128,19 @@ const removeItemFromCart = async (userId, productId) => {
   }
 };
 
+const fetchProductModel = async (productId) => {
+  try {
+    const response = await axios.get(`${REALITY_URL}/${productId}`);
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw response;
+    }
+  } catch (error) {
+    throw `Error fetching product model : ${error}`;
+  }
+};
+
 export {
   checkLoginCredentials,
   fetchProductDetails,
@@ -136,4 +150,5 @@ export {
   updateCart,
   getCartDetails,
   removeItemFromCart,
+  fetchProductModel,
 };

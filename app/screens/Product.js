@@ -29,8 +29,8 @@ const Product = ({ navigation }) => {
     setQuanity(value);
   };
 
-  const onClickHandler = () => {
-    navigation.navigate("AR");
+  const redirectToAR = () => {
+    navigation.navigate("AR", { productId: productId });
   };
 
   const addToCart = async () => {
@@ -80,8 +80,8 @@ const Product = ({ navigation }) => {
           <Carousal images={productData.images} />
         )}
         <Button
-          onPress={onClickHandler}
-          title="View in AR"
+          onPress={redirectToAR}
+          title="View in your Room"
           color={colors.secondary}
           accessibilityLabel="View the product in your home"
         />

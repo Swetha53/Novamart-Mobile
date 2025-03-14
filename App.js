@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Product from "./app/screens/Product";
 import Profile from "./app/screens/Profile";
-// import AR from "./app/screens/AugmentedReality";
+import AR from "./app/screens/AugmentedReality";
 import Login from "./app/screens/Login";
 import Register from "./app/screens/Register";
 import Cart from "./app/screens/Cart";
@@ -18,7 +18,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Cart">
+      <Stack.Navigator initialRouteName="Profile">
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen
           name="Product"
@@ -26,7 +26,11 @@ export default function App() {
           initialParams={{ productId: null }}
         />
         <Stack.Screen name="Profile" component={Profile} />
-        {/* <Stack.Screen name="AR" component={AR} /> */}
+        <Stack.Screen
+          name="AR"
+          component={AR}
+          initialParams={{ productId: null }}
+        />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Cart" component={Cart} />
