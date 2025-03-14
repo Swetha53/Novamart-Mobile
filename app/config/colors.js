@@ -8,4 +8,7 @@ export default {
   normal: "#d3d6d8",
   normalBorder: "#d3d6d8",
   normalColor: "#41464b",
+  warning: "#fff3cd",
+  warningBorder: "#ffeeba",
+  warningColor: "#856404",
 };

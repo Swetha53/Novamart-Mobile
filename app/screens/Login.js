@@ -14,6 +14,7 @@ import colors from "../config/colors";
 import Input from "../components/Input";
 import Ticker from "../components/Ticker";
 import { checkLoginCredentials } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const dimensions = Dimensions.get("screen");
 const HEIGHT = 1.2 * dimensions.height;
@@ -29,16 +30,17 @@ const Login = ({ navigation }) => {
     setErrorMessage(message);
   };
   const checkCredentials = async () => {
+    let userData;
     try {
-      const userData = await checkLoginCredentials(email, password);
-      sessionStorage.setItem("userId", userData.userId);
-      sessionStorage.setItem("userName", userData.firstName);
-      sessionStorage.setItem("avatar", userData.avatar);
-      navigation.navigate("Profile");
+      userData = await checkLoginCredentials(email, password);
     } catch (err) {
       toggleTicker(true, err.message);
     } finally {
       // setLoading(false);
+      await AsyncStorage.setItem("userId", userData.body[0].userId);
+      await AsyncStorage.setItem("userName", userData.body[0].firstName);
+      await AsyncStorage.setItem("avatar", userData.body[0].avatar);
+      navigation.navigate("Profile");
     }
   };
   return (

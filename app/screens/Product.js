@@ -11,8 +11,9 @@ import colors from "../config/colors";
 import Header from "../components/Header";
 import Counter from "../components/Counter";
 import Carousal from "../components/Carousal";
-import { fetchProductDetails } from "../config/api";
+import { fetchProductDetails, updateCart } from "../config/api";
 import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const dimensions = Dimensions.get("screen");
 
@@ -22,6 +23,7 @@ const Product = ({ navigation }) => {
   const [productData, setProductData] = useState([]);
   const [attributes, setAttributes] = useState({});
   const [quantity, setQuanity] = useState(0);
+  const [userId, setUserId] = useState(null);
 
   const onCounterChange = (value) => {
     setQuanity(value);
@@ -31,14 +33,27 @@ const Product = ({ navigation }) => {
     navigation.navigate("AR");
   };
 
-  const addToCart = () => {
-    console.log("Add to cart:" + quantity);
+  const addToCart = async () => {
+    const requestBody = {
+      userId: userId,
+      productId: productData.productId,
+      quantity: quantity,
+      unitPrice: productData.price,
+      currencyCode: productData.currencyCode,
+    };
+    try {
+      // TODO set cart quantity in session storage so that cart icon can display that
+      await updateCart(requestBody);
+    } catch (err) {
+      toggleTicker(true, err.message);
+    } finally {
+      // setLoading(false);
+    }
   };
 
   useEffect(() => {
     const loadDetails = async () => {
       try {
-        console.log(productId);
         const tempProductDetails = await fetchProductDetails(productId);
         setProductData(tempProductDetails.body[0]);
         setAttributes(tempProductDetails.body[0].attributes);
@@ -48,7 +63,12 @@ const Product = ({ navigation }) => {
         // setLoading(false);
       }
     };
+    const loadUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userId");
+      setUserId(storedUserId);
+    };
 
+    loadUserId();
     loadDetails();
   }, []);
 

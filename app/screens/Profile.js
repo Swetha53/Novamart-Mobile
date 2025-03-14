@@ -14,11 +14,13 @@ import star from "../assets/star.png";
 import filledStar from "../assets/fill_star.png";
 import imagePlaceholder from "../assets/image.png";
 import OrderTable from "../components/OrderTable";
+import Ticker from "../components/Ticker";
 import {
   fetchUserDetails,
   fetchUserReviews,
   fetchUserOrders,
 } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const dimensions = Dimensions.get("screen");
 
@@ -27,47 +29,51 @@ const Profile = ({ navigation }) => {
   const [userData, setUserData] = useState({});
   const [userReviews, setUserReviews] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [showTicker, setShowTicker] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    const loadUserData = async () => {
+    const loadUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem("userId");
+      setUserId(storedUserId);
+      loadUserData(storedUserId);
+      loadUserReviews(storedUserId);
+    };
+
+    const loadUserData = async (storedId = "") => {
+      const requestId = storedId ? storedId : userId;
       try {
-        const tempUserDetails = await fetchUserDetails(
-          "eec0e9f9-8247-4d8a-8ada-df48116e818d"
-        );
+        const tempUserDetails = await fetchUserDetails(requestId);
         setUserData(tempUserDetails.body[0]);
       } catch (err) {
-        // setError(err.message);
+        toggleTicker(true, err.message);
       } finally {
         // setLoading(false);
       }
     };
 
-    const loadUserReviews = async () => {
+    const loadUserReviews = async (storedId = "") => {
+      const requestId = storedId ? storedId : userId;
       try {
-        const tempUserReviews = await fetchUserReviews(
-          "eec0e9f9-8247-4d8a-8ada-df48116e818d"
-        );
+        const tempUserReviews = await fetchUserReviews(requestId);
         setUserReviews(tempUserReviews.body);
       } catch (err) {
-        // setError(err.message);
+        toggleTicker(true, err.message);
       } finally {
         // setLoading(false);
       }
     };
 
-    loadUserData();
-    loadUserReviews();
+    loadUserId();
   }, []);
 
   const loadUserOrders = async () => {
     try {
-      //   TODO find a way to store user id cookies or something else
-      const tempUserOrders = await fetchUserOrders(
-        "9633ec2b-7e0e-466e-866a-159afccf7542"
-      );
+      const tempUserOrders = await fetchUserOrders(userId);
       setOrders(tempUserOrders.body);
     } catch (err) {
-      // setError(err.message);
+      toggleTicker(true, err.message);
     } finally {
       // setLoading(false);
     }
@@ -79,140 +85,171 @@ const Profile = ({ navigation }) => {
       loadUserOrders();
     }
   };
+  const toggleTicker = (value, message) => {
+    setShowTicker(value);
+    setErrorMessage(message);
+  };
+
   return (
     <SafeAreaView>
+      {showTicker && (
+        <Ticker
+          type="error"
+          message={errorMessage}
+          closeTickerHandler={() => {
+            toggleTicker(false, "");
+          }}
+        />
+      )}
       <Header navigation={navigation} />
-      <SafeAreaView style={styles.container}>
-        <SafeAreaView style={styles.pageheader}>
-          <Image source={{ uri: userData.avatar }} style={styles.avatar} />
-          <Pressable
-            onPress={() => {
-              tabChange(0);
-            }}
-            style={[styles.tab, activeTab == 0 ? {} : styles.passiveTab]}
-          >
-            <Text>Profile</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              tabChange(1);
-            }}
-            style={[styles.tab, activeTab == 1 ? {} : styles.passiveTab]}
-          >
-            <Text>Order</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              tabChange(2);
-            }}
-            style={[
-              styles.tab,
-              activeTab == 2 ? {} : styles.passiveTab,
-              styles.disabledTab,
-            ]}
-          >
-            <Text>Wishlist</Text>
-          </Pressable>
+      {!userData && (
+        <SafeAreaView style={styles.container__empty}>
+          <Text style={styles.container__empty__header}>No Profile Found</Text>
+          <Text style={styles.container__empty__text}>
+            You might not be logged in. Please log in to see your profile!!
+          </Text>
         </SafeAreaView>
-        {activeTab == 0 && (
-          <SafeAreaView style={styles.infocontainer}>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>First Name:</Text>
-              <Text style={styles.infotext}>{userData.firstName}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>Last Name:</Text>
-              <Text style={styles.infotext}>{userData.lastName}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>Age:</Text>
-              <Text style={styles.infotext}>{userData.age}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>Gender:</Text>
-              <Text style={styles.infotext}>{userData.gender}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>Email:</Text>
-              <Text style={styles.infotext}>{userData.email}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.inforow}>
-              <Text style={styles.infolabel}>Address:</Text>
-              <Text style={styles.infotext}>{userData.address}</Text>
-            </SafeAreaView>
-            <SafeAreaView style={styles.reviewcontainer}>
-              <ScrollView contentContainerStyle={styles.reviewscrollcontainer}>
-                <Text style={styles.reviewheading}>Your Reviews:</Text>
-                {userReviews.map((userReview, idx) => (
-                  <SafeAreaView key={idx} style={styles.reviewminicontainer}>
-                    <SafeAreaView style={styles.ratingcontainer}>
-                      {Array.from(
-                        { length: userReview.rating },
-                        (_, i) => i + 1
-                      ).map((num) => (
-                        <Image
-                          source={filledStar}
-                          key={"fill-" + num}
-                          style={styles.rating}
-                        />
-                      ))}
-                      {Array.from(
-                        { length: 5 - userReview.rating },
-                        (_, i) => i + 1
-                      ).map((num) => (
-                        <Image
-                          source={star}
-                          key={"unfilled-" + num}
-                          style={styles.rating}
-                        />
-                      ))}
+      )}
+      {userData && (
+        <SafeAreaView style={styles.container}>
+          <SafeAreaView style={styles.pageheader}>
+            <Image
+              source={{ uri: userData.avatar }}
+              style={styles.avatar}
+              borderRadius={10}
+            />
+            <Pressable
+              onPress={() => {
+                tabChange(0);
+              }}
+              style={[styles.tab, activeTab == 0 ? {} : styles.passiveTab]}
+            >
+              <Text>Profile</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                tabChange(1);
+              }}
+              style={[styles.tab, activeTab == 1 ? {} : styles.passiveTab]}
+            >
+              <Text>Order</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                tabChange(2);
+              }}
+              style={[
+                styles.tab,
+                activeTab == 2 ? {} : styles.passiveTab,
+                styles.disabledTab,
+              ]}
+            >
+              <Text>Wishlist</Text>
+            </Pressable>
+          </SafeAreaView>
+          {activeTab == 0 && (
+            <SafeAreaView style={styles.infocontainer}>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>First Name:</Text>
+                <Text style={styles.infotext}>{userData.firstName}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>Last Name:</Text>
+                <Text style={styles.infotext}>{userData.lastName}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>Age:</Text>
+                <Text style={styles.infotext}>{userData.age}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>Gender:</Text>
+                <Text style={styles.infotext}>{userData.gender}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>Email:</Text>
+                <Text style={styles.infotext}>{userData.email}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.inforow}>
+                <Text style={styles.infolabel}>Address:</Text>
+                <Text style={styles.infotext}>{userData.address}</Text>
+              </SafeAreaView>
+              <SafeAreaView style={styles.reviewcontainer}>
+                <ScrollView
+                  contentContainerStyle={styles.reviewscrollcontainer}
+                >
+                  <Text style={styles.reviewheading}>Your Reviews:</Text>
+                  {userReviews.map((userReview, idx) => (
+                    <SafeAreaView key={idx} style={styles.reviewminicontainer}>
+                      <SafeAreaView style={styles.ratingcontainer}>
+                        {Array.from(
+                          { length: userReview.rating },
+                          (_, i) => i + 1
+                        ).map((num) => (
+                          <Image
+                            source={filledStar}
+                            key={"fill-" + num}
+                            style={styles.rating}
+                          />
+                        ))}
+                        {Array.from(
+                          { length: 5 - userReview.rating },
+                          (_, i) => i + 1
+                        ).map((num) => (
+                          <Image
+                            source={star}
+                            key={"unfilled-" + num}
+                            style={styles.rating}
+                          />
+                        ))}
+                      </SafeAreaView>
+                      <Text style={styles.reviewtitle}>{userReview.title}</Text>
+                      <Text style={styles.reviewcomment}>
+                        {userReview.comment}
+                      </Text>
+                      <SafeAreaView style={styles.reviewfooter}>
+                        {userReview.imageUrl &&
+                        userReview.imageUrl.length > 0 ? (
+                          <Image
+                            source={{ uri: userReview.imageUrl[0] }}
+                            style={styles.reviewimage}
+                          />
+                        ) : (
+                          <Image
+                            source={imagePlaceholder}
+                            style={styles.reviewimage}
+                          />
+                        )}
+                        <Pressable
+                          onPress={() => {
+                            navigation.navigate("Product", {
+                              productId: userReview.productId,
+                            });
+                          }}
+                        >
+                          <Text style={styles.reviewlink}>See Product</Text>
+                        </Pressable>
+                      </SafeAreaView>
                     </SafeAreaView>
-                    <Text style={styles.reviewtitle}>{userReview.title}</Text>
-                    <Text style={styles.reviewcomment}>
-                      {userReview.comment}
-                    </Text>
-                    <SafeAreaView style={styles.reviewfooter}>
-                      {userReview.imageUrl && userReview.imageUrl.length > 0 ? (
-                        <Image
-                          source={{ uri: userReview.imageUrl[0] }}
-                          style={styles.reviewimage}
-                        />
-                      ) : (
-                        <Image
-                          source={imagePlaceholder}
-                          style={styles.reviewimage}
-                        />
-                      )}
-                      <Pressable
-                        onPress={() => {
-                          navigation.navigate("Product", {
-                            productId: userReview.productId,
-                          });
-                        }}
-                      >
-                        <Text style={styles.reviewlink}>See Product</Text>
-                      </Pressable>
-                    </SafeAreaView>
-                  </SafeAreaView>
+                  ))}
+                </ScrollView>
+              </SafeAreaView>
+            </SafeAreaView>
+          )}
+          {activeTab == 1 && (
+            <SafeAreaView style={styles.ordercontainer}>
+              <ScrollView style={styles.orderscrollcontainer}>
+                {orders.map((order, idx) => (
+                  <OrderTable
+                    order={order}
+                    key={idx}
+                    name={userData.firstName + " " + userData.lastName}
+                  />
                 ))}
               </ScrollView>
             </SafeAreaView>
-          </SafeAreaView>
-        )}
-        {activeTab == 1 && (
-          <SafeAreaView style={styles.ordercontainer}>
-            <ScrollView style={styles.orderscrollcontainer}>
-              {orders.map((order, idx) => (
-                <OrderTable
-                  order={order}
-                  key={idx}
-                  name={userData.firstName + " " + userData.lastName}
-                />
-              ))}
-            </ScrollView>
-          </SafeAreaView>
-        )}
-      </SafeAreaView>
+          )}
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 };
@@ -227,6 +264,22 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
   },
+  container__empty: {
+    backgroundColor: colors.normal,
+    width: dimensions.width,
+    height: dimensions.height,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  container__empty__header: {
+    fontWeight: 600,
+    fontSize: 24,
+  },
+  container__empty__text: {
+    width: "60%",
+    textAlign: "center",
+  },
   pageheader: {
     display: "flex",
     flexDirection: "row",
@@ -240,7 +293,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     width: "25%",
     aspectRatio: 1 / 1,
-    borderRadius: "50%",
   },
   tab: {
     backgroundColor: colors.secondary,

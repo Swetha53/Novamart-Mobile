@@ -8,8 +8,8 @@ const Counter = (props) => {
   const [value, setValue] = useState(1);
   const onChangeEventHandler = (tempValue) => {
     if (value + tempValue <= props.maxQuantity && value + tempValue > 0) {
+      props.onChangeEventHandler(value + tempValue);
       setValue(value + tempValue);
-      props.onChangeEventHandler(value);
     }
   };
   return (
