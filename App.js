@@ -1,5 +1,4 @@
 import { StatusBar } from "expo-status-bar";
-import { useDeviceOrientation } from "@react-native-community/hooks";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Product from "./app/screens/Product";
@@ -14,11 +13,9 @@ import Dashboard from "./app/screens/Dashboard";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const { landscape } = useDeviceOrientation();
-
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Profile">
+      <Stack.Navigator initialRouteName="Register">
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen
           name="Product"
@@ -32,7 +29,11 @@ export default function App() {
           initialParams={{ productId: null }}
         />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen
+          name="Register"
+          component={Register}
+          initialParams={{ accountType: "customer" }}
+        />
         <Stack.Screen name="Cart" component={Cart} />
         <Stack.Screen name="Checkout" component={Checkout} />
       </Stack.Navigator>
