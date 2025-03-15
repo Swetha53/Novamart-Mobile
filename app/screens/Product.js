@@ -11,6 +11,7 @@ import colors from "../config/colors";
 import Header from "../components/Header";
 import Counter from "../components/Counter";
 import Carousal from "../components/Carousal";
+import Ticker from "../components/Ticker";
 import { fetchProductDetails, updateCart } from "../config/api";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,13 +25,18 @@ const Product = ({ navigation }) => {
   const [attributes, setAttributes] = useState({});
   const [quantity, setQuanity] = useState(0);
   const [userId, setUserId] = useState(null);
+  const [showTicker, setShowTicker] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onCounterChange = (value) => {
     setQuanity(value);
   };
-
   const redirectToAR = () => {
     navigation.navigate("AR", { productId: productId });
+  };
+  const toggleTicker = (value, message) => {
+    setShowTicker(value);
+    setErrorMessage(message);
   };
 
   const addToCart = async () => {
@@ -74,6 +80,15 @@ const Product = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {showTicker && (
+        <Ticker
+          type="error"
+          message={errorMessage}
+          closeTickerHandler={() => {
+            toggleTicker(false, "");
+          }}
+        />
+      )}
       <Header navigation={navigation} />
       <View style={styles.minicontainer}>
         {productData && productData.images && (

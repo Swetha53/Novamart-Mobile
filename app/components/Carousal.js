@@ -1,6 +1,5 @@
 import { StyleSheet, Image, SafeAreaView, Pressable } from "react-native";
 import React, { useState } from "react";
-import colors from "../config/colors";
 import GestureRecognizer from "react-native-swipe-gestures";
 
 const Carousal = (props) => {

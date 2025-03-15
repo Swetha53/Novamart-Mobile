@@ -39,6 +39,32 @@ const checkLoginCredentials = async (email, password) => {
   }
 };
 
+const registerUser = async (requestBody) => {
+  try {
+    const response = await axios.post(`${USER_URL}/register`, requestBody);
+    if (response.data && response.data.status == 200) {
+      return response.data;
+    } else {
+      throw response.message;
+    }
+  } catch (error) {
+    throw `Error registering user: ${error}`;
+  }
+};
+
+const fetchAllProducts = async () => {
+  try {
+    const response = await axios.get(`${PRODUCT_URL}/all`);
+    if (response.data && response.data.status == 200) {
+      return response.data;
+    } else {
+      throw response.message;
+    }
+  } catch (error) {
+    throw `Error fetching product details: ${error}`;
+  }
+};
+
 const fetchProductDetails = async (productId) => {
   try {
     const response = await axios.get(`${PRODUCT_URL}?productId=${productId}`);
@@ -143,6 +169,8 @@ const fetchProductModel = async (productId) => {
 
 export {
   checkLoginCredentials,
+  registerUser,
+  fetchAllProducts,
   fetchProductDetails,
   fetchUserDetails,
   fetchUserReviews,
