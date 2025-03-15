@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Register">
+      <Stack.Navigator initialRouteName="AR">
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen
           name="Product"

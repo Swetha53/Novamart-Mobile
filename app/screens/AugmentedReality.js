@@ -104,17 +104,19 @@ const AugmentedReality = () => {
           shadowFarZ={5}
           shadowOpacity={0.7}
         />
-        {modelData && modelData.asset_url && (
-          <Viro3DObject
-            source={{ uri: modelData.asset_url }}
-            position={[0, 0.2, 0]}
-            scale={[0.2, 0.2, 0.2]}
-            type="GLB"
-            lightReceivingBitMask={3}
-            shadowCastingBitMask={2}
-            transformBehaviors={["billboardY"]}
-          />
-        )}
+        {/* {modelData && modelData.asset_url && ( */}
+        <Viro3DObject
+          source={{
+            uri: "https://reggvbnnkqmprlkojomx.supabase.co/storage/v1/object/public/Products/8989f64c-0ddc-4416-94f4-cd7cadc32131.glb",
+          }}
+          position={[0, 0.2, 0]}
+          scale={[0.2, 0.2, 0.2]}
+          type="GLB"
+          lightReceivingBitMask={3}
+          shadowCastingBitMask={2}
+          transformBehaviors={["billboardY"]}
+        />
+        {/* )} */}
         <ViroQuad
           rotation={[-90, 0, 0]}
           width={0.5}
