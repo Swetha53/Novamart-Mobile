@@ -36,14 +36,14 @@
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to use your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use your microphone"
       },
-      "bundleIdentifier": "com.example.android"
+      "bundleIdentifier": "com.project.novamart"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/reverse_logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.example.android"
+      "package": "com.project.novamart"
     },
     "web": {
       "favicon": "./app/assets/reverse_logo.png"
