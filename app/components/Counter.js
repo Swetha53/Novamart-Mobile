@@ -5,9 +5,10 @@ import uparrow from "./../assets/up_arrow.png";
 import downarrow from "./../assets/down_arrow.png";
 
 const Counter = (props) => {
-  const [value, setValue] = useState(1);
+  const { quantity, maxQuantity } = props;
+  const [value, setValue] = useState(quantity ? quantity : 1);
   const onChangeEventHandler = (tempValue) => {
-    if (value + tempValue <= props.maxQuantity && value + tempValue > 0) {
+    if (value + tempValue <= maxQuantity && value + tempValue > 0) {
       props.onChangeEventHandler(value + tempValue);
       setValue(value + tempValue);
     }
@@ -26,10 +27,7 @@ const Counter = (props) => {
         >
           <Image
             source={uparrow}
-            style={[
-              styles.image,
-              value == props.maxQuantity ? styles.disabled : {},
-            ]}
+            style={[styles.image, value == maxQuantity ? styles.disabled : {}]}
           />
         </Pressable>
         <Pressable

@@ -32,7 +32,14 @@ const Header = (props) => {
   return (
     // TODO Dashboard and Search
     <SafeAreaView style={styles.container}>
-      <Image source={logo} style={styles.image} />
+      <Pressable
+        style={styles.image_container}
+        onPress={() => {
+          navigation.navigate("Dashboard");
+        }}
+      >
+        <Image source={logo} style={styles.image} />
+      </Pressable>
       <Text style={styles.search}>Search</Text>
       <Image
         source={avatar ? { uri: avatar } : profile}
@@ -72,8 +79,12 @@ const styles = StyleSheet.create({
   search: {
     width: "50%",
   },
-  image: {
+  image_container: {
     width: "10%",
+    aspectRatio: 1 / 1,
+  },
+  image: {
+    height: "100%",
     aspectRatio: 1 / 1,
   },
   profile: {

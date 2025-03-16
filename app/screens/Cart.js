@@ -32,6 +32,7 @@ const Cart = ({ navigation }) => {
   const [cart, setCart] = useState({});
   const [cartItems, setCartItems] = useState([]);
   const [subTotalAmount, setSubtotaAmount] = useState(0);
+  const [itemCount, setItemCount] = useState(0);
   const [showTicker, setShowTicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -68,16 +69,19 @@ const Cart = ({ navigation }) => {
     try {
       const tempCart = await getCartDetails(storedUserId);
       let tempSubTotal = 0;
+      let tempItemCount = 0;
       const tempCartItems = await Promise.all(
         tempCart.body[0].cartItemList.map(async (item) => {
           const tempPartialCartItem = await loadDetails(item.productId);
           tempSubTotal += item.totalPrice;
+          tempItemCount += item.quantity;
           return { ...tempPartialCartItem, ...item };
         })
       );
       setCart(tempCart.body[0]);
       setCartItems(tempCartItems);
       setSubtotaAmount(tempSubTotal);
+      setItemCount(tempItemCount);
     } catch (err) {
       toggleTicker(true, err.message);
     } finally {
@@ -110,6 +114,7 @@ const Cart = ({ navigation }) => {
       toggleTicker(true, err.message);
     } finally {
       // setLoading(false);
+      setCartItems([]);
       loadCartDetails(userId);
     }
   };
@@ -121,7 +126,7 @@ const Cart = ({ navigation }) => {
       return {};
     } finally {
       // setLoading(false);
-      loadCartDetails();
+      loadCartDetails(userId);
     }
   };
 
@@ -186,7 +191,6 @@ const Cart = ({ navigation }) => {
       unitPrice: foundItem.unitPrice,
       currencyCode: foundItem.currencyCode,
     };
-    console.log(request);
     addToCart(request);
   };
 
@@ -263,8 +267,8 @@ const Cart = ({ navigation }) => {
         <SafeAreaView style={styles.cart__total}>
           <SafeAreaView style={styles.cart__total__row}>
             <Text style={styles.sub__header}>
-              Sub-Total Amount ({cartItems.length} Item
-              {cartItems.length == 1 ? "" : "s"}):
+              Sub-Total Amount ({itemCount} Item
+              {itemCount == 1 ? "" : "s"}):
             </Text>
             <Text style={styles.sub__header}>
               {cart.currencyCode} {subTotalAmount}
@@ -345,6 +349,7 @@ const Cart = ({ navigation }) => {
                   </Text>
                 </SafeAreaView>
                 <Counter
+                  quantity={item.quantity}
                   maxQuantity={item.quantityAvailable}
                   onChangeEventHandler={(value) => {
                     onCounterChange(value, item.productId);

@@ -113,6 +113,19 @@ const fetchUserOrders = async (userId) => {
   }
 };
 
+const placeUserOrder = async (requestBody) => {
+  try {
+    const response = await axios.post(`${ORDER_URL}/create`, requestBody);
+    if (response.data && response.data.status == 200) {
+      return response.data;
+    } else {
+      throw response.message;
+    }
+  } catch (error) {
+    throw `Error placing order: ${error}`;
+  }
+};
+
 const updateCart = async (requestBody) => {
   try {
     const response = await axios.post(`${CART_URL}/update`, requestBody);
@@ -175,6 +188,7 @@ export {
   fetchUserDetails,
   fetchUserReviews,
   fetchUserOrders,
+  placeUserOrder,
   updateCart,
   getCartDetails,
   removeItemFromCart,
