@@ -3,23 +3,23 @@ import { Platform } from "react-native";
 
 const PRODUCT_URL =
   Platform.OS == "ios"
-    ? "http://localhost:8090/api/products"
+    ? "http://192.168.2.108:8090/api/products"
     : "http://10.0.2.2:8090/api/products";
 const USER_URL =
   Platform.OS == "ios"
-    ? "http://localhost:8095/api/users"
+    ? "http://192.168.2.108:8095/api/users"
     : "http://10.0.2.2:8095/api/users";
 const REVIEW_URL =
   Platform.OS == "ios"
-    ? "http://localhost:8090/api/reviews"
+    ? "http://192.168.2.108:8090/api/reviews"
     : "http://10.0.2.2:8090/api/reviews";
 const ORDER_URL =
   Platform.OS == "ios"
-    ? "http://localhost:8091/api/orders"
+    ? "http://192.168.2.108:8091/api/orders"
     : "http://10.0.2.2:8091/api/orders";
 const CART_URL =
   Platform.OS == "ios"
-    ? "http://localhost:8092/api/cart"
+    ? "http://192.168.2.108:8092/api/cart"
     : "http://10.0.2.2:8092/api/cart";
 const REALITY_URL = "http://127.0.0.1:8000/reality";
 

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "Novamart",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "default",
@@ -31,10 +31,12 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos",
-        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to use your camera",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use your microphone"
+        "NSPhotoLibraryUsageDescription": "Allow app to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow app to save photos",
+        "NSCameraUsageDescription": "Allow app to use your camera",
+        "NSMicrophoneUsageDescription": "Allow app to use your microphone",
+        "NSLocalNetworkUsageDescription": "Allow  appto use your local network",
+        "ARKitUsageDescription": "Allow app to use your AR Kit"
       },
       "bundleIdentifier": "com.project.novamart"
     },
