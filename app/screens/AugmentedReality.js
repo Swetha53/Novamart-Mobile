@@ -73,58 +73,53 @@ const AugmentedReality = () => {
   };
 
   return (
-    <>
-      <ViroARSceneNavigator
-        key={sceneKey}
-        debug={true}
-        initialScene={{
-          scene: () => (
-            <ViroARScene
-              onTrackingUpdated={(state, reason) => {
-                _onTrackingUpdated(state, reason);
-              }}
+    <ViroARSceneNavigator
+      key={sceneKey}
+      initialScene={{
+        scene: () => (
+          <ViroARScene
+            onTrackingUpdated={(state, reason) => {
+              _onTrackingUpdated(state, reason);
+            }}
+          >
+            <ViroAmbientLight color="#ffffff" intensity={200} />
+            <ViroARPlane
+              dragType="FixedToWorld"
+              onPlaneDetected={(plane) => console.log("Plane detected:", plane)}
             >
-              <ViroAmbientLight color="#ffffff" intensity={200} />
-              <ViroARPlane
+              <ViroText
+                visible={position != null}
+                text="Model should be here!"
+              />
+              <Viro3DObject
+                visible={position != null}
+                source={{ uri: modelUrl }}
+                scale={[0.5, 0.5, 0.5]}
+                type="GLB"
                 dragType="FixedToWorld"
-                onPlaneDetected={(plane) =>
-                  console.log("Plane detected:", plane)
-                }
-              >
-                <ViroText
-                  visible={position != null}
-                  text="Model should be here!"
-                />
-                <Viro3DObject
-                  visible={position != null}
-                  source={{ uri: modelUrl }}
-                  scale={[0.5, 0.5, 0.5]}
-                  type="GLB"
-                  dragType="FixedToWorld"
-                  onDrag={() => {}}
-                  onLoadStart={_onLoadStart}
-                  onLoadEnd={_onLoadEnd}
-                  onError={_onError}
-                />
-                <ViroQuad
-                  visible={position == null}
-                  width={1}
-                  height={1}
-                  rotation={[-90, 0, 0]}
-                  materials="QuadMaterial"
-                  onClickState={(state, position) => {
-                    if (state === ViroClickStateTypes.CLICKED) {
-                      console.log(position);
-                      setPosition([...position]);
-                    }
-                  }}
-                />
-              </ViroARPlane>
-            </ViroARScene>
-          ),
-        }}
-      />
-    </>
+                onDrag={() => {}}
+                onLoadStart={_onLoadStart}
+                onLoadEnd={_onLoadEnd}
+                onError={_onError}
+              />
+              <ViroQuad
+                visible={position == null}
+                width={1}
+                height={1}
+                rotation={[-90, 0, 0]}
+                materials="QuadMaterial"
+                onClickState={(state, position) => {
+                  if (state === ViroClickStateTypes.CLICKED) {
+                    console.log(position);
+                    setPosition([...position]);
+                  }
+                }}
+              />
+            </ViroARPlane>
+          </ViroARScene>
+        ),
+      }}
+    />
   );
 };
 
